@@ -295,6 +295,23 @@
       </div>
     </div>
 
+    <div class="card">
+      <h2 class="card-title">System Info</h2>
+      <div class="button-grid">
+        <button onclick="callAPI('/health')" style="background: #22c55e; color: #000;">
+          <span class="icon">&#128994;</span> Health Check
+        </button>
+        <button onclick="fetchSystemInfo()">
+          <span class="icon">&#128202;</span> Service Info
+        </button>
+      </div>
+      <div class="result-section">
+        <div id="system-result" class="result-box">
+          Check service health and system information...
+        </div>
+      </div>
+    </div>
+
     <div class="status-bar">
       <div class="status-item">
         <span id="api-status" class="status-dot"></span>
@@ -369,6 +386,23 @@
         resultBox.className = 'result-box error';
         resultBox.textContent = 'Error: ' + error.message;
         traceStatus.className = 'status-dot error';
+      }
+    }
+
+    async function fetchSystemInfo() {
+      const resultEl = document.getElementById('system-result');
+      resultEl.className = 'result-box loading';
+      resultEl.textContent = 'Fetching system info...';
+      try {
+        const res = await fetch('/health');
+        const data = await res.json();
+        data.userAgent = navigator.userAgent;
+        data.url = window.location.href;
+        resultEl.className = 'result-box success';
+        resultEl.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        resultEl.className = 'result-box error';
+        resultEl.textContent = 'Error: ' + error.message;
       }
     }
 
